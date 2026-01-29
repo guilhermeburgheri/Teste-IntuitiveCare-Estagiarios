@@ -1,7 +1,7 @@
+import re 
 import csv
 import zipfile
 from pathlib import Path
-
 from openpyxl import load_workbook
 
 
@@ -20,9 +20,28 @@ def extrair_zips(zips_dir: Path, destino: Path) -> None:
             z.extractall(pasta)
 
 
+def slug(s: str) -> str:
+    s = (s or "").strip().lower().lstrip("\ufeff").strip('"').strip("'")
+    s = re.sub(r"[^a-z0-9]+", "_", s)
+    return s.strip("_")
+
+
 def tem_evento_sinistro(texto: str) -> bool:
     t = (texto or "").lower()
     return any(k in t for k in CHAVES)
+
+
+def parse_valor(v) -> float | None:
+    if v is None:
+        return None
+    s = str(v).strip()
+    if not s:
+        return None
+    s = s.replace(".", "").replace(",", ".")
+    try:
+        return float(s)
+    except Exception:
+        return None
 
 
 def linhas_csv_ou_txt(path: Path):
@@ -58,31 +77,42 @@ def linhas_xlsx(path: Path):
             yield d
 
 
-def contar_arquivos_com_eventos(base_dir: Path) -> int:
-    count = 0
+def filtrar_eventos_sinistros(base_dir: Path):
+    desc_keys = ("descricao", "ds_conta", "descricao_conta", "conta")
+    val_keys = ("vl_saldo_final", "valor", "vl", "valor_despesas", "vl_despesas")
 
     for arq in base_dir.rglob("*"):
-        if not arq.is_file():
-            continue
-        if arq.suffix.lower() not in SAIDAS_ACEITAS:
+        if not arq.is_file() or arq.suffix.lower() not in SAIDAS_ACEITAS:
             continue
 
-        try:
-            if arq.suffix.lower() in (".csv", ".txt"):
-                linhas = linhas_csv_ou_txt(arq)
-            else:
-                linhas = linhas_xlsx(arq)
+        linhas = linhas_csv_ou_txt(arq) if arq.suffix.lower() in (".csv", ".txt") else linhas_xlsx(arq)
 
-            achou = False
-            for row in linhas:
-                if any(tem_evento_sinistro(v) for v in row.values()):
-                    achou = True
+        for row in linhas:
+            norm = {slug(str(k)): v for k, v in row.items()}
+
+            descricao = ""
+            for k in desc_keys:
+                if norm.get(k):
+                    descricao = str(norm.get(k))
+                    break
+            if not tem_evento_sinistro(descricao):
+                continue
+
+            valor_raw = None
+            for k in val_keys:
+                if norm.get(k) not in (None, ""):
+                    valor_raw = norm.get(k)
                     break
 
-            if achou:
-                count += 1
+            valor = parse_valor(valor_raw)
+            if valor is None:
+                continue
 
-        except Exception:
-            continue
+            yield {"arquivo": str(arq), "descricao": descricao, "valor": valor}
 
-    return count
+
+def contar_arquivos_com_eventos(base_dir: Path) -> int:
+    arquivos = set()
+    for item in filtrar_eventos_sinistros(base_dir):
+        arquivos.add(item["arquivo"])
+    return len(arquivos)

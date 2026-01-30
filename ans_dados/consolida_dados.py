@@ -27,23 +27,20 @@ def gerar_finalizado(extracao_dir: Path, cons_dir: Path) -> Path:
             continue
 
         valor = float(item["valor"])
-        id_oper = str(item.get("id_operadora") or "").strip()
+        reg_ans = str(item.get("id_operadora") or "").strip()
 
-        if not id_oper:
-            inconsist.append({"Tipo": "ID_OPERADORA_VAZIO", "Arquivo": str(arq)})
+        if not reg_ans:
+            inconsist.append({"Tipo": "REG_ANS_VAZIO", "Arquivo": str(arq)})
             continue
 
-        cnpj = id_oper
-        razao = ""
-
-        chave = (cnpj, ano, tri)
+        chave = (reg_ans, ano, tri)
         soma[chave] = soma.get(chave, 0.0) + valor
 
         if valor <= 0:
             inconsist.append(
                 {
                     "Tipo": "VALOR_ZERO_OU_NEGATIVO",
-                    "CNPJ": cnpj,
+                    "RegistroANS": reg_ans,
                     "Ano": ano,
                     "Trimestre": tri,
                     "Valor": valor,
@@ -54,9 +51,9 @@ def gerar_finalizado(extracao_dir: Path, cons_dir: Path) -> Path:
     consolidado = cons_dir / "consolidado.csv"
     with consolidado.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["CNPJ", "RazaoSocial", "Trimestre", "Ano", "ValorDespesas"])
-        for (cnpj, ano, tri), total in sorted(soma.items(), key=lambda x: (x[0][1], x[0][2], x[0][0])):
-            w.writerow([cnpj, razao, tri, ano, f"{total:.2f}"])
+        w.writerow(["RegistroANS", "RazaoSocial", "Trimestre", "Ano", "ValorDespesas"])
+        for (reg_ans, ano, tri), total in sorted(soma.items(), key=lambda x: (x[0][1], x[0][2], x[0][0])):
+            w.writerow([reg_ans, "", tri, ano, f"{total:.2f}"])
 
     if inconsist:
         vistos = set()

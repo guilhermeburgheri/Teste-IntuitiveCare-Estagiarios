@@ -7,12 +7,12 @@ def so_digitos(s: str) -> str:
     return re.sub(r"\D+", "", s or "")
 
 
-def reg_ans_valido(RegistroANS_raw: str) -> bool:
-    RegistroANS = so_digitos(RegistroANS_raw)
+def cnpj_valido(cnpj_raw: str) -> bool:
+    cnpj = so_digitos(cnpj_raw)
 
-    if len(RegistroANS) != 14:
+    if len(cnpj) != 14:
         return False
-    if RegistroANS == RegistroANS[0] * 14:
+    if cnpj == cnpj[0] * 14:
         return False
 
     def calc_dv(base: str, pesos: list[int]) -> str:
@@ -23,9 +23,9 @@ def reg_ans_valido(RegistroANS_raw: str) -> bool:
     pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
     pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
 
-    dv1 = calc_dv(RegistroANS[:12], pesos1)
-    dv2 = calc_dv(RegistroANS[:12] + dv1, pesos2)
-    return RegistroANS[-2:] == dv1 + dv2
+    dv1 = calc_dv(cnpj[:12], pesos1)
+    dv2 = calc_dv(cnpj[:12] + dv1, pesos2)
+    return cnpj[-2:] == dv1 + dv2
 
 
 def parse_float(valor: str):
@@ -54,20 +54,24 @@ def validar_dados(consolidado_csv: Path, out_dir: Path) -> None:
 
     with consolidado_csv.open("r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames or []
 
         campos = {"RegistroANS", "RazaoSocial", "Trimestre", "Ano", "ValorDespesas"}
         if not reader.fieldnames or not campos.issubset(reader.fieldnames):
             raise ValueError(f"CSV inválido, colunas esperadas: {campos}")
+        
+        tem_cnpj = "CNPJ" in fieldnames
+
+        campos_saida = fieldnames + [
+            "StatusValor",
+            "StatusRazaoSocial",
+        ]
+        if tem_cnpj:
+            campos_saida.append("StatusCNPJ")
 
         with validado_csv.open("w", encoding="utf-8", newline="") as fv, erros_csv.open(
             "w", encoding="utf-8", newline=""
         ) as fe:
-
-            campos_saida = reader.fieldnames + [
-                "StatusRegistroANS",
-                "StatusValor",
-                "StatusRazaoSocial",
-            ]
 
             w_valid = csv.DictWriter(fv, fieldnames=campos_saida)
             w_valid.writeheader()
@@ -79,22 +83,8 @@ def validar_dados(consolidado_csv: Path, out_dir: Path) -> None:
             w_err.writeheader()
 
             for linha, row in enumerate(reader, start=2):
-                RegistroANS = (row.get("RegistroANS") or "").strip()
                 razao = (row.get("RazaoSocial") or "").strip()
                 valor_raw = row.get("ValorDespesas")
-
-                if reg_ans_valido(RegistroANS):
-                    row["StatusRegistroANS"] = "OK"
-                else:
-                    row["StatusRegistroANS"] = "INVALIDO"
-                    w_err.writerow(
-                        {
-                            "Linha": linha,
-                            "Campo": "RegistroANS",
-                            "Erro": "RegistroANS_INVALIDO",
-                            "Valor": RegistroANS,
-                        }
-                    )
 
                 valor = parse_float(valor_raw)
                 if valor is None:
@@ -120,6 +110,7 @@ def validar_dados(consolidado_csv: Path, out_dir: Path) -> None:
                 else:
                     row["StatusValor"] = "OK"
 
+
                 if razao:
                     row["StatusRazaoSocial"] = "OK"
                 else:
@@ -132,9 +123,26 @@ def validar_dados(consolidado_csv: Path, out_dir: Path) -> None:
                             "Valor": razao,
                         }
                     )
+                
+
+                if tem_cnpj:
+                    cnpj = (row.get("CNPJ") or "").strip()
+                    if cnpj_valido(cnpj):
+                        row["StatusCNPJ"] = "OK"
+                    else:
+                        row["StatusCNPJ"] = "INVALIDO"
+                        w_err.writerow(
+                            {
+                                "Linha": linha,
+                                "Campo": "CNPJ",
+                                "Erro": "CNPJ_INVALIDO",
+                                "Valor": cnpj,
+                            }
+                        )
 
                 w_valid.writerow(row)
 
+    print("Validação concluída!")
 
 if __name__ == "__main__":
     validar_dados(

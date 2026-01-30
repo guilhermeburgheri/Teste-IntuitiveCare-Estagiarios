@@ -27,6 +27,28 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 - Geração do arquivo consolidado.csv.
 - Compactação do resultado final em consolidado_despesas.zip.
 
+### 2.1 - Validação de dados com diferentes estratégias [FEITO]
+- Validando os dados conforme necessidade:
+  - Valor das despesas: Deve ser numérico e positivo.
+  - Razão social: não pode estar vazia.
+  - CNPJ: Calculo para verificar se é válido.
+
+- CNPJ inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
+
+### 2.2 - Enriquecendo dados e tratando falahas [FEITO]
+- O cadastro foi retirado pela API também disponibilizada pela ANS: https://dadosabertos.ans.gov.br/FTP/PDA/operadoras_de_plano_de_saude_ativas/
+- Ficando o RegistroANS como identificador primário e CNPJ para cadastro.
+- Campos criados:
+  - CNPJ
+  - RazaoSocial
+  - UF
+  - Modalidade
+
+- RegistroANS duplicados serão mantidos apenas os primeiros para não causar conflito nas informações.
+- RegistroANS inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento. 
+
+- Trade-off técnico: Optei por carregar de forma completa por não possuir uma grande quantidade de arquivos e facilitar as joins.
+
 ### Tratamento de inconsistências
 Durante o processo, as seguintes inconsistências foram identificadas, registradas em um arquivo separado e tratadas:
 

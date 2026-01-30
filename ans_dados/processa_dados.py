@@ -5,7 +5,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 
-CHAVES = ("evento", "sinistro")
+CHAVES = ("evento", "sinistro", "eventos", "sinistros")
 SAIDAS_ACEITAS = (".csv", ".txt", ".xlsx", ".xlsm")
 
 
@@ -108,7 +108,13 @@ def filtrar_eventos_sinistros(base_dir: Path):
             if valor is None:
                 continue
 
-            yield {"arquivo": str(arq), "descricao": descricao, "valor": valor}
+            id_oper = str( norm.get("cnpj") or
+            norm.get("reg_ans") or
+            norm.get("registroans") or
+            norm.get("registro_ans") or
+            "" ).strip()
+            
+            yield {"arquivo": str(arq), "id_operadora": id_oper, "descricao": descricao, "valor": valor}
 
 
 def contar_arquivos_com_eventos(base_dir: Path) -> int:

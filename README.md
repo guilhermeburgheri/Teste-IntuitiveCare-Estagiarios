@@ -33,8 +33,6 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
   - Razão social: não pode estar vazia.
   - CNPJ: Calculo para verificar se é válido.
 
-- CNPJ inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
-
 ### 2.2 - Enriquecendo dados e tratando falahas [FEITO]
 - O cadastro foi retirado pela API também disponibilizada pela ANS: https://dadosabertos.ans.gov.br/FTP/PDA/operadoras_de_plano_de_saude_ativas/
 - Ficando o RegistroANS como identificador primário e CNPJ para cadastro.
@@ -42,14 +40,18 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
   - CNPJ
   - RazaoSocial
   - UF
-  - Modalidade
-
-- RegistroANS duplicados serão mantidos apenas os primeiros para não causar conflito nas informações.
-- RegistroANS inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento. 
+  - Modalidade 
 
 - Trade-off técnico: Optei por carregar de forma completa por não possuir uma grande quantidade de arquivos e facilitar as joins.
 
-### Tratamento de inconsistências
+### 2.3 - Agregando os dados [FEITO]
+- Agregando as despesas de acordo com a Razão Social e UF.
+- Possui o total da despesa junto com a média e o desvio de acordo com os trimestres.
+
+- Trade-off técnico: Optei por ordenar depois de agregar os dados por que assim o tamanho do arquivo está bem menor, tornando o processo mais rápido.
+
+
+### Tratamento de inconsistências e falhas
 Durante o processo, as seguintes inconsistências foram identificadas, registradas em um arquivo separado e tratadas:
 
 - *CNPJ duplicado com razão social diferente*  
@@ -63,6 +65,11 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
 - *Trimestre ou ano não identificável*  
   - O arquivo é ignorado.
   - A ocorrência é registrada como inconsistência.
+
+- CNPJ inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
+
+- RegistroANS duplicados serão mantidos apenas os primeiros para não causar conflito nas informações.
+- RegistroANS inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
     
 ---
 
@@ -73,11 +80,24 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
 
 ---
 
+## Execução do processo
+
+- Os comandos devem ser executados na pasta raiz do projeto, segue a ordem:
+  - py -m ans_dados.cli
+  - py -m ans_dados.enriquece_dados
+  - py -m ans_dados.valida_dados
+  - py -m ans_dados.agrega_dados
+
+--- 
+
 ## Estrutura do projeto
 ```
 ans_dados/
+├── agrega_dados.py
 ├── ans_source.py
-├── processa_dados.py
+├── cli.py
 ├── consolida_dados.py
-└── cli.py
+├── enriquece_dados.py
+├── processa_dados.py
+└── valida_dados.py
 ```

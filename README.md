@@ -92,7 +92,7 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
 
 ## Estrutura do projeto
 ```
-ans_dados/
+ans_dados/ Etapas 1 e 2
 ├── agrega_dados.py
 ├── ans_source.py
 ├── cli.py
@@ -100,4 +100,14 @@ ans_dados/
 ├── enriquece_dados.py
 ├── processa_dados.py
 └── valida_dados.py
+
+banco_de_dados/ Etapa 3
+├── docker-compose.yml
+├── arquivos
+│   ├── consolidado_despesas.csv | Etapa 1.3
+│   ├── despesas_agregadas.csv | Etapa 2.3
+│   ├── relatio_cadop.csv | Etapa 2.2
+└── sql
+│   ├── 01_ddl.sql
+
 ```

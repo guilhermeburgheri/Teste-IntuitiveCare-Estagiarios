@@ -50,8 +50,14 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 
 - Trade-off técnico: Optei por ordenar depois de agregar os dados por que assim o tamanho do arquivo está bem menor, tornando o processo mais rápido.
 
+### 3.2 - Queries DDL para estruturar tabelas [FEITO]
+- Criação das tabelas "operadoras", "despesas_consolidadas" e "despesas_agregadas".
 
-### Tratamento de inconsistências e falhas
+- Trade-off técnico: Decidi seguir com tableas separadas para facilitar a análise dos dados.
+- Trade-off técnico: Utilizei o "Numeric" para não ter problemas com pontos flutuantes.
+- Trade-off técnico: Utilizei o "Smallint" por já possui os dados separados.
+
+## Tratamento de inconsistências e falhas
 Durante o processo, as seguintes inconsistências foram identificadas, registradas em um arquivo separado e tratadas:
 
 - *CNPJ duplicado com razão social diferente*  
@@ -77,6 +83,8 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
 
 ### Uso de bibliotecas
 - A biblioteca **Pandas** não foi utilizada devido às políticas de segurança do sistema. Para evitar alterações nas configurações do Windows, o projeto foi desenvolvido apenas com bibliotecas nativas do Python.
+
+- A ferramenta **Docker** foi utilizada para tornar padrão a execução do projeto, permitindo a execução em diferentes máquinas sem a necessidade de configuração e instalação de dependências.
 
 ---
 
@@ -106,7 +114,7 @@ banco_de_dados/ Etapa 3
 ├── arquivos
 │   ├── consolidado_despesas.csv | Etapa 1.3
 │   ├── despesas_agregadas.csv | Etapa 2.3
-│   ├── relatio_cadop.csv | Etapa 2.2
+│   └── relatio_cadop.csv | Etapa 2.2
 └── sql
 │   ├── 01_ddl.sql
 

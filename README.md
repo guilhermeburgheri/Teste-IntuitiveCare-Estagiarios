@@ -57,13 +57,25 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 - Trade-off técnico: Utilizei o "Numeric" para não ter problemas com pontos flutuantes.
 - Trade-off técnico: Utilizei o "Smallint" por já possui os dados separados.
 
-### 3.2 - Queries para importar o conteúdo dos arquivos CSV [FEITO]
+### 3.3 - Queries para importar o conteúdo dos arquivos CSV [FEITO]
 - Criação das tabelas em formato de texto para acelerar a importação.
 - Importação utilizando copy e \copy.
 - Tratativas realizadas:
   - Os valores NULL foram ignorados e em alguns casos substituídas por texto padrão.
   - Remoção da string, passando de 1T para somente 1.
   - Armazenando ano e trimestre em colunas diferentes.
+
+### 3.4 - Queries analíticas [FEITO]
+  - Query 1: Crescimento percentual de despesas entre primeiro e último trimestre das operadoras.
+    - Desafio: Calculo do crescimento percentual de despesas só é realizado para operadoras que estão presente desde o primeiro trimestre. Como é feito a validação do primeiro e último trimestre aquelas operadoras que não tinham registro no primeiro trimestre ficariam zeradas.
+
+  - Query 2: Os 5 estados com maiores despesas totais.
+    - Desafio adicional: Operadoras sem UF não participam do calculo, aparecem apenas uma vez no período e não são adicionados valores com base na média.
+
+  - Query 3: Quais operadoras tiveram despesas acima da média
+    - Trade-off técnico: Foi realizado diversas divisões ao longo do ano/trimestre, para possibilitar os calculos corretos e facilitar alterações caso o filtro seja alterado.
+
+---
 
 ## Tratamento de inconsistências e falhas
 Durante o processo, as seguintes inconsistências foram identificadas, registradas em um arquivo separado e tratadas:
@@ -124,7 +136,9 @@ banco_de_dados/ Etapa 3
 │   ├── despesas_agregadas.csv | Etapa 2.3
 │   └── relatio_cadop.csv | Etapa 2.2
 └── sql
-│   ├── 01_ddl.sql
-│   └── 02_ddl.sql
+    ├── 01_ddl.sql
+    ├── 02_ddl.sql
+    └── 03_queries.sql
 
+api/ Etapa 4
 ```

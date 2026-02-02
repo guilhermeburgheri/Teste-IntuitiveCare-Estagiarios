@@ -57,6 +57,14 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 - Trade-off técnico: Utilizei o "Numeric" para não ter problemas com pontos flutuantes.
 - Trade-off técnico: Utilizei o "Smallint" por já possui os dados separados.
 
+### 3.2 - Queries para importar o conteúdo dos arquivos CSV [FEITO]
+- Criação das tabelas em formato de texto para acelerar a importação.
+- Importação utilizando copy e \copy.
+- Tratativas realizadas:
+  - Os valores NULL foram ignorados e em alguns casos substituídas por texto padrão.
+  - Remoção da string, passando de 1T para somente 1.
+  - Armazenando ano e trimestre em colunas diferentes.
+
 ## Tratamento de inconsistências e falhas
 Durante o processo, as seguintes inconsistências foram identificadas, registradas em um arquivo separado e tratadas:
 
@@ -117,5 +125,6 @@ banco_de_dados/ Etapa 3
 │   └── relatio_cadop.csv | Etapa 2.2
 └── sql
 │   ├── 01_ddl.sql
+│   └── 02_ddl.sql
 
 ```

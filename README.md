@@ -120,6 +120,7 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
 
 ## Estrutura do projeto
 ```
+
 ans_dados/ Etapas 1 e 2
 ├── agrega_dados.py
 ├── ans_source.py
@@ -140,5 +141,26 @@ banco_de_dados/ Etapa 3
     ├── 02_ddl.sql
     └── 03_queries.sql
 
-api/ Etapa 4
+interface_web/ Etapa 4
+└── backend/
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── data/
+│       ├── relatorio_cadop
+│       └── consolidado_despesas.csv
+├── frontend/
+│   └── src/
+│   │   ├── router/
+│   │   │   └── index.js
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── views/
+│   │   │   └── HomeView.js
+│   │   ├── App.vue
+│   │   └── main.js
+│   └── .gitignore
+└── docker-compose.yml
+
 ```

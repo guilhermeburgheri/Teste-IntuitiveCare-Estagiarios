@@ -5,4 +5,5 @@ __pycache__/
 consolidado_despesas.zip
 Teste_GuilhermeBurgheri.zip
 banco_de_dados/arquivos
+interface_web/backend/data
 .env

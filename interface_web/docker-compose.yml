@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./backend
+    container_name: intuitive_api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped

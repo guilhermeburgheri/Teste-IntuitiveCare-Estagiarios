@@ -1,0 +1,682 @@
+{
+  "info": {
+    "_postman_id": "d85b0070-c12a-4676-b03b-d5f929794ed7",
+    "name": "ANS - Operadoras API (Teste 4)",
+    "description": "Todas as rotas da API do Teste 4 (Flask + CSV).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19082088"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /api/health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Body status ok', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('status');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET /api/health",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/health",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "health"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:02:19 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "21"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"ok\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Operadoras",
+      "item": [
+        {
+          "name": "GET /api/operadoras (paginação)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Metadados de paginação', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('data');",
+                  "  pm.expect(json).to.have.property('page');",
+                  "  pm.expect(json).to.have.property('limit');",
+                  "  pm.expect(json).to.have.property('total');",
+                  "  pm.expect(Array.isArray(json.data)).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/operadoras?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operadoras"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET /api/operadoras (paginação)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operadoras?page=1&limit=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operadoras"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:04:09 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "7829"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"Bairro\": \"PRAÇA DA BANDEIRA\",\n            \"CEP\": \"36660000\",\n            \"CNPJ\": \"19541931000125\",\n            \"Cargo_Representante\": \"SÓCIO ADMINISTRADOR\",\n            \"Cidade\": \"Além Paraíba\",\n            \"Complemento\": \"\",\n            \"DDD\": \"32\",\n            \"Data_Registro_ANS\": \"2015-05-19\",\n            \"Endereco_eletronico\": \"contabilidade@cbnassessoria.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA CAPITÃO MEDEIROS DE REZENDE\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"\",\n            \"Numero\": \"274\",\n            \"REGISTRO_OPERADORA\": \"419761\",\n            \"Razao_Social\": \"18 DE JULHO ADMINISTRADORA DE BENEFÍCIOS LTDA\",\n            \"Regiao_de_Comercializacao\": \"6\",\n            \"Representante\": \"LUIZ HENRIQUE MARENDINO GONÇALVES\",\n            \"Telefone\": \"34624649\",\n            \"UF\": \"MG\"\n        },\n        {\n            \"Bairro\": \"VILA ROMANA\",\n            \"CEP\": \"05049000\",\n            \"CNPJ\": \"22869997000153\",\n            \"Cargo_Representante\": \"SÓCIO ADMINISTRADORA\",\n            \"Cidade\": \"São Paulo\",\n            \"Complemento\": \"SALA 126\",\n            \"DDD\": \"11\",\n            \"Data_Registro_ANS\": \"2019-06-13\",\n            \"Endereco_eletronico\": \"labmarisol@gmail.com\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA CATÃO\",\n            \"Modalidade\": \"Odontologia de Grupo\",\n            \"Nome_Fantasia\": \"\",\n            \"Numero\": \"128\",\n            \"REGISTRO_OPERADORA\": \"421545\",\n            \"Razao_Social\": \"2B ODONTOLOGIA OPERADORA DE PLANOS ODONTOLÓGICOS LTDA\",\n            \"Regiao_de_Comercializacao\": \"4\",\n            \"Representante\": \"MARISOL BECHELLI\",\n            \"Telefone\": \"34415852\",\n            \"UF\": \"SP\"\n        },\n        {\n            \"Bairro\": \"CENTRO\",\n            \"CEP\": \"13010151\",\n            \"CNPJ\": \"27452545000195\",\n            \"Cargo_Representante\": \"REPRESENTANTE\",\n            \"Cidade\": \"Campinas\",\n            \"Complemento\": \"1º ANDAR\",\n            \"DDD\": \"19\",\n            \"Data_Registro_ANS\": \"2018-10-09\",\n            \"Endereco_eletronico\": \"ans.plano@hospitalcare.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA: BERNARDINO DE CAMPOS\",\n            \"Modalidade\": \"Medicina de Grupo\",\n            \"Nome_Fantasia\": \"\",\n            \"Numero\": \"230\",\n            \"REGISTRO_OPERADORA\": \"421421\",\n            \"Razao_Social\": \"2CARE OPERADORA DE SAÚDE LTDA.\",\n            \"Regiao_de_Comercializacao\": \"5\",\n            \"Representante\": \"RODRIGO PINHO RIBEIRO\",\n            \"Telefone\": \"37901224\",\n            \"UF\": \"SP\"\n        },\n        {\n            \"Bairro\": \"SANTANA\",\n            \"CEP\": \"02401000\",\n            \"CNPJ\": \"13138885000131\",\n            \"Cargo_Representante\": \"SóCIO-ADMINISTRADOR E REPRESEN\",\n            \"Cidade\": \"São Paulo\",\n            \"Complemento\": \"CONJUNTO 143 - SALA 01\",\n            \"DDD\": \"11\",\n            \"Data_Registro_ANS\": \"2011-05-05\",\n            \"Endereco_eletronico\": \"diretoria@apssaude.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA VOLUNTÁRIOS DA PÁTRIA\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"A.P.S. SAÚDE.\",\n            \"Numero\": \"2525\",\n            \"REGISTRO_OPERADORA\": \"418030\",\n            \"Razao_Social\": \"A.P.S. ADMINISTRADORA DE BENEFÍCOS LTDA.\",\n            \"Regiao_de_Comercializacao\": \"4\",\n            \"Representante\": \"PERCÍVEL GAETA\",\n            \"Telefone\": \"45223468\",\n            \"UF\": \"SP\"\n        },\n        {\n            \"Bairro\": \"SANTA EFIGÊNIA\",\n            \"CEP\": \"30150281\",\n            \"CNPJ\": \"17505793000101\",\n            \"Cargo_Representante\": \"Diretor Presidente\",\n            \"Cidade\": \"Belo Horizonte\",\n            \"Complemento\": \"Subsolo, 2º andar e 3º andar\",\n            \"DDD\": \"31\",\n            \"Data_Registro_ANS\": \"1998-12-28\",\n            \"Endereco_eletronico\": \"abertta.ans@arcelormittal.com.br\",\n            \"Fax\": \"32484377\",\n            \"Logradouro\": \"AV. BERNARDO MONTEIRO\",\n            \"Modalidade\": \"Autogestão\",\n            \"Nome_Fantasia\": \"ABERTTA SAÚDE\",\n            \"Numero\": \"831\",\n            \"REGISTRO_OPERADORA\": \"314668\",\n            \"Razao_Social\": \"ABERTTA SAÚDE - ASSOCIAÇÃO BENEFICENTE DOS EMPREGADOS DA ARCELORMITTAL NO BRASIL\",\n            \"Regiao_de_Comercializacao\": \"4\",\n            \"Representante\": \"WERNER DUARTE DALLA\",\n            \"Telefone\": \"32484300\",\n            \"UF\": \"MG\"\n        },\n        {\n            \"Bairro\": \"BARRA DA TIJUCA\",\n            \"CEP\": \"22775056\",\n            \"CNPJ\": \"17687511000126\",\n            \"Cargo_Representante\": \"ADMINISTRADOR\",\n            \"Cidade\": \"Rio de Janeiro\",\n            \"Complemento\": \"BLOCO 4, SALA 403\",\n            \"DDD\": \"\",\n            \"Data_Registro_ANS\": \"2014-11-13\",\n            \"Endereco_eletronico\": \"contato@abplus.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"AVENIDA JOSÉ DA SILVA NETO\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"\",\n            \"Numero\": \"200\",\n            \"REGISTRO_OPERADORA\": \"419621\",\n            \"Razao_Social\": \"ABPLUS ADMINISTRADORA DE BENEFÍCIOS LTDA.\",\n            \"Regiao_de_Comercializacao\": \"6\",\n            \"Representante\": \"ROBERTO CARLOS MACHADO RODRIGUES\",\n            \"Telefone\": \"\",\n            \"UF\": \"RJ\"\n        },\n        {\n            \"Bairro\": \"CENTRO\",\n            \"CEP\": \"20070020\",\n            \"CNPJ\": \"10458298000131\",\n            \"Cargo_Representante\": \"ADMINISTRADOR\",\n            \"Cidade\": \"Rio de Janeiro\",\n            \"Complemento\": \"SALA 2901\",\n            \"DDD\": \"21\",\n            \"Data_Registro_ANS\": \"2013-06-13\",\n            \"Endereco_eletronico\": \"LEONARDO@UNIMEDICASAUDE.COM\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA BUENOS AIRES\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"AD SALUTE\",\n            \"Numero\": \"68\",\n            \"REGISTRO_OPERADORA\": \"418901\",\n            \"Razao_Social\": \"AD SALUTE ADMINISTRADORA DE BENEFÍCIOS LTDA\",\n            \"Regiao_de_Comercializacao\": \"5\",\n            \"Representante\": \"JOÃO CARMO DA SILVEIRA\",\n            \"Telefone\": \"35531692\",\n            \"UF\": \"RJ\"\n        },\n        {\n            \"Bairro\": \"SANTANA\",\n            \"CEP\": \"02010200\",\n            \"CNPJ\": \"58280182000181\",\n            \"Cargo_Representante\": \"ADMINISTRADOR\",\n            \"Cidade\": \"São Paulo\",\n            \"Complemento\": \"SALA 314\",\n            \"DDD\": \"\",\n            \"Data_Registro_ANS\": \"2025-01-27\",\n            \"Endereco_eletronico\": \"wesley@adcplasp.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA VOLUNTÁRIOS DA PÁTRIA\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"\",\n            \"Numero\": \"1284\",\n            \"REGISTRO_OPERADORA\": \"424293\",\n            \"Razao_Social\": \"ADC ADMINISTRADORA DE BENEFICIOS LTDA\",\n            \"Regiao_de_Comercializacao\": \"\",\n            \"Representante\": \"WESLEY LEME DE OLIVEIRA\",\n            \"Telefone\": \"\",\n            \"UF\": \"SP\"\n        },\n        {\n            \"Bairro\": \"PINHEIROS\",\n            \"CEP\": \"05420000\",\n            \"CNPJ\": \"28315826000169\",\n            \"Cargo_Representante\": \"Sócio Administrador\",\n            \"Cidade\": \"São Paulo\",\n            \"Complemento\": \"CJ 96\",\n            \"DDD\": \"11\",\n            \"Data_Registro_ANS\": \"2019-01-09\",\n            \"Endereco_eletronico\": \"cristiane@admlife.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"AVENIDA PEDROSO DE MORAIS\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"ADM LIFE\",\n            \"Numero\": \"272\",\n            \"REGISTRO_OPERADORA\": \"421553\",\n            \"Razao_Social\": \"ADM LIFE - ADMINISTRADORA DE BENEFÍCIOS LTDA.\",\n            \"Regiao_de_Comercializacao\": \"4\",\n            \"Representante\": \"NELITO JÚNIOR DE ALMEIDA SILVA\",\n            \"Telefone\": \"99475503\",\n            \"UF\": \"SP\"\n        },\n        {\n            \"Bairro\": \"Butantã\",\n            \"CEP\": \"05501000\",\n            \"CNPJ\": \"07867825000157\",\n            \"Cargo_Representante\": \"SÓCIO ADMINISTRADOR\",\n            \"Cidade\": \"São Paulo\",\n            \"Complemento\": \"\",\n            \"DDD\": \"11\",\n            \"Data_Registro_ANS\": \"2009-03-30\",\n            \"Endereco_eletronico\": \"sandra@geia.com.br\",\n            \"Fax\": \"36602000\",\n            \"Logradouro\": \"Avenida Valdemar Ferreira\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"GÉIA ADMINISTRADORA DE BENEFICIOS\",\n            \"Numero\": \"463\",\n            \"REGISTRO_OPERADORA\": \"416932\",\n            \"Razao_Social\": \"ADMSERV BENEFÍCIOS E SERVIÇOS LTDA\",\n            \"Regiao_de_Comercializacao\": \"2\",\n            \"Representante\": \"PEDRO OLIVEIRA OBLIZINER\",\n            \"Telefone\": \"36602000\",\n            \"UF\": \"SP\"\n        }\n    ],\n    \"limit\": 10,\n    \"page\": 1,\n    \"total\": 1110\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/operadoras (busca por razão social/CNPJ/registro via q)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/operadoras?page=1&limit=10&q={{q}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operadoras"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "q",
+                  "value": "{{q}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET /api/operadoras (busca por razão social/CNPJ/registro via q)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operadoras?page=1&limit=10&q=419761",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operadoras"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "q",
+                      "value": "419761"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:10:29 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "874"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"Bairro\": \"PRAÇA DA BANDEIRA\",\n            \"CEP\": \"36660000\",\n            \"CNPJ\": \"19541931000125\",\n            \"Cargo_Representante\": \"SÓCIO ADMINISTRADOR\",\n            \"Cidade\": \"Além Paraíba\",\n            \"Complemento\": \"\",\n            \"DDD\": \"32\",\n            \"Data_Registro_ANS\": \"2015-05-19\",\n            \"Endereco_eletronico\": \"contabilidade@cbnassessoria.com.br\",\n            \"Fax\": \"\",\n            \"Logradouro\": \"RUA CAPITÃO MEDEIROS DE REZENDE\",\n            \"Modalidade\": \"Administradora de Benefícios\",\n            \"Nome_Fantasia\": \"\",\n            \"Numero\": \"274\",\n            \"REGISTRO_OPERADORA\": \"419761\",\n            \"Razao_Social\": \"18 DE JULHO ADMINISTRADORA DE BENEFÍCIOS LTDA\",\n            \"Regiao_de_Comercializacao\": \"6\",\n            \"Representante\": \"LUIZ HENRIQUE MARENDINO GONÇALVES\",\n            \"Telefone\": \"34624649\",\n            \"UF\": \"MG\"\n        }\n    ],\n    \"limit\": 10,\n    \"page\": 1,\n    \"total\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/operadoras/{cnpj} (detalhe)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 ou 404', () => {",
+                  "  pm.expect([200,404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/operadoras/{{cnpj}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operadoras",
+                "{{cnpj}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET /api/operadoras/{cnpj} (detalhe)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operadoras/19541931000125",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operadoras",
+                    "19541931000125"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:11:19 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "724"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"Bairro\": \"PRAÇA DA BANDEIRA\",\n    \"CEP\": \"36660000\",\n    \"CNPJ\": \"19541931000125\",\n    \"Cargo_Representante\": \"SÓCIO ADMINISTRADOR\",\n    \"Cidade\": \"Além Paraíba\",\n    \"Complemento\": \"\",\n    \"DDD\": \"32\",\n    \"Data_Registro_ANS\": \"2015-05-19\",\n    \"Endereco_eletronico\": \"contabilidade@cbnassessoria.com.br\",\n    \"Fax\": \"\",\n    \"Logradouro\": \"RUA CAPITÃO MEDEIROS DE REZENDE\",\n    \"Modalidade\": \"Administradora de Benefícios\",\n    \"Nome_Fantasia\": \"\",\n    \"Numero\": \"274\",\n    \"REGISTRO_OPERADORA\": \"419761\",\n    \"Razao_Social\": \"18 DE JULHO ADMINISTRADORA DE BENEFÍCIOS LTDA\",\n    \"Regiao_de_Comercializacao\": \"6\",\n    \"Representante\": \"LUIZ HENRIQUE MARENDINO GONÇALVES\",\n    \"Telefone\": \"34624649\",\n    \"UF\": \"MG\"\n}"
+            },
+            {
+              "name": "GET /api/operadoras/{cnpj} (detalhe)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operadoras/19541515000125",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operadoras",
+                    "19541515000125"
+                  ]
+                }
+              },
+              "status": "NOT FOUND",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:11:37 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "47"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Operadora não encontrada\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/operadoras/{cnpj}/despesas (histórico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 ou 404', () => {",
+                  "  pm.expect([200,404]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test('Possui data (array)', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('data');",
+                  "    pm.expect(Array.isArray(json.data)).to.be.true;",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/operadoras/{{cnpj}}/despesas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operadoras",
+                "{{cnpj}}",
+                "despesas"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET /api/operadoras/{cnpj}/despesas (histórico)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operadoras/19541931000125/despesas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operadoras",
+                    "19541931000125",
+                    "despesas"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:12:02 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "73"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"cnpj\": \"19541931000125\",\n    \"data\": [],\n    \"registro_ans\": \"419761\"\n}"
+            },
+            {
+              "name": "GET /api/operadoras/{cnpj}/despesas (histórico)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operadoras/19541515000125/despesas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operadoras",
+                    "19541515000125",
+                    "despesas"
+                  ]
+                }
+              },
+              "status": "NOT FOUND",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:12:20 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "47"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Operadora não encontrada\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Estatísticas",
+      "item": [
+        {
+          "name": "GET /api/estatisticas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Campos esperados', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('total_despesas');",
+                  "  pm.expect(json).to.have.property('media_despesas');",
+                  "  pm.expect(json).to.have.property('top_5_operadoras');",
+                  "  pm.expect(json).to.have.property('despesas_por_uf');",
+                  "  pm.expect(Array.isArray(json.top_5_operadoras)).to.be.true;",
+                  "  pm.expect(Array.isArray(json.despesas_por_uf)).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estatisticas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estatisticas"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "GET /api/estatisticas",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/estatisticas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "estatisticas"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "Werkzeug/3.1.5 Python/3.11.14"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 03 Feb 2026 16:12:29 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "2180"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Connection",
+                  "value": "close"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"despesas_por_uf\": [\n        {\n            \"total\": 873399106056.5698,\n            \"uf\": \"SP\"\n        },\n        {\n            \"total\": 718072244091.6597,\n            \"uf\": \"RJ\"\n        },\n        {\n            \"total\": 151412016880.33997,\n            \"uf\": \"PR\"\n        },\n        {\n            \"total\": 149769055321.49002,\n            \"uf\": \"DF\"\n        },\n        {\n            \"total\": 148435868923.71008,\n            \"uf\": \"MG\"\n        },\n        {\n            \"total\": 139177206696.56003,\n            \"uf\": \"CE\"\n        },\n        {\n            \"total\": 82922081632.11003,\n            \"uf\": \"RS\"\n        },\n        {\n            \"total\": 52961611652.65999,\n            \"uf\": \"SC\"\n        },\n        {\n            \"total\": 51920465704.53,\n            \"uf\": \"GO\"\n        },\n        {\n            \"total\": 45431818910.54,\n            \"uf\": \"ES\"\n        },\n        {\n            \"total\": 25446572704.38,\n            \"uf\": \"PE\"\n        },\n        {\n            \"total\": 21634418549.55,\n            \"uf\": \"MT\"\n        },\n        {\n            \"total\": 18887460152.280003,\n            \"uf\": \"MS\"\n        },\n        {\n            \"total\": 16302502443.839996,\n            \"uf\": \"PA\"\n        },\n        {\n            \"total\": 14005187924.560001,\n            \"uf\": \"PI\"\n        },\n        {\n            \"total\": 12551041338.170002,\n            \"uf\": \"PB\"\n        },\n        {\n            \"total\": 11526050588.990004,\n            \"uf\": \"BA\"\n        },\n        {\n            \"total\": 10713839258.370003,\n            \"uf\": \"RN\"\n        },\n        {\n            \"total\": 10632640202.27,\n            \"uf\": \"AL\"\n        },\n        {\n            \"total\": 6187994855.47,\n            \"uf\": \"SE\"\n        },\n        {\n            \"total\": 5617394794.98,\n            \"uf\": \"AM\"\n        },\n        {\n            \"total\": 5524976681.43,\n            \"uf\": \"SEM_UF\"\n        },\n        {\n            \"total\": 5364723083.02,\n            \"uf\": \"RO\"\n        },\n        {\n            \"total\": 2204504634.0499997,\n            \"uf\": \"TO\"\n        },\n        {\n            \"total\": 2055951470.1999998,\n            \"uf\": \"MA\"\n        },\n        {\n            \"total\": 1665025032.35,\n            \"uf\": \"AC\"\n        },\n        {\n            \"total\": 36483422.18,\n            \"uf\": \"AP\"\n        }\n    ],\n    \"media_despesas\": 1178767446.6269429,\n    \"top_5_operadoras\": [\n        {\n            \"nome\": \"005711\",\n            \"total\": 322688347192.4\n        },\n        {\n            \"nome\": \"006246\",\n            \"total\": 255723677376.81\n        },\n        {\n            \"nome\": \"326305\",\n            \"total\": 196745000673.21002\n        },\n        {\n            \"nome\": \"359017\",\n            \"total\": 89929846536.84\n        },\n        {\n            \"nome\": \"368253\",\n            \"total\": 88233812743.75\n        }\n    ],\n    \"total_despesas\": 2583858243006.259\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "cnpj",
+      "value": "00000000000000"
+    },
+    {
+      "key": "q",
+      "value": "unimed"
+    }
+  ]
+}

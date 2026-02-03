@@ -17,6 +17,9 @@ DESPESAS_CSV = DATA_DIR / "consolidado_despesas.csv"
 def only_digits(s: str) -> str:
     return "".join(ch for ch in str(s) if ch.isdigit())
 
+def to_int_digits(value) -> int:
+    s = only_digits(value)
+    return int(s) if s else 0
 
 def to_float_br(value) -> float:
     if value is None:
@@ -52,6 +55,19 @@ def read_csv_dicts(path: Path, delimiter: str = ",", encoding: str = "utf-8"):
 _CACHE = {"operadoras": None, "despesas": None}
 
 
+def find_operadora(cnpj_or_registro: str):
+    op = load_operadoras()
+    key_digits = only_digits(cnpj_or_registro)
+
+    if len(key_digits) >= 11:
+        found = op["by_cnpj"].get(key_digits)
+        if found:
+            return found
+
+    found = op["by_registro"].get(key_digits)
+    return found
+
+
 def load_operadoras():
 
     if _CACHE["operadoras"] is not None:
@@ -63,6 +79,14 @@ def load_operadoras():
         r["_registro_norm"] = (r.get("REGISTRO_OPERADORA", "") or "").strip()
         r["_cnpj_norm"] = only_digits(r.get("CNPJ", ""))
         r["_razao_norm"] = (r.get("Razao_Social", "") or "").strip().lower()
+    
+    by_cnpj = {}
+    by_registro = {}
+    for r in rows:
+        if r["_cnpj_norm"]:
+            by_cnpj[r["_cnpj_norm"]] = r
+        if r["_registro_norm"]:
+            by_registro[r["_registro_norm"]] = r
 
     data = {
         "rows": rows,
@@ -71,6 +95,9 @@ def load_operadoras():
         "col_razao": "Razao_Social",
         "col_uf": "UF",
         "col_modalidade": "Modalidade",
+        "by_cnpj": by_cnpj,
+        "by_registro": by_registro,
+
     }
     _CACHE["operadoras"] = data
     return data
@@ -93,8 +120,9 @@ def load_despesas():
     for r in rows:
         r["_registro_norm"] = (r.get("RegistroANS", "") or "").strip()
         r["_valor_num"] = to_float_br(r.get("ValorDespesas", ""))
-        r["_ano_num"] = int(r.get("Ano") or 0)
-        r["_tri_num"] = int(r.get("Trimestre") or 0)
+        r["_ano_num"] = to_int_digits(r.get("Ano"))
+        r["_tri_num"] = to_int_digits(r.get("Trimestre"))
+
 
     data = {
         "rows": rows,
@@ -149,12 +177,9 @@ def listar_operadoras():
     return jsonify({"data": data, "page": page, "limit": limit, "total": total})
 
 
-@app.get("/api/operadoras/<registro_ans>")
-def detalhe_operadora(registro_ans):
-    op = load_operadoras()
-    reg = only_digits(registro_ans)
-
-    found = next((r for r in op["rows"] if r.get("_registro_norm") == reg), None)
+@app.get("/api/operadoras/<cnpj>")
+def detalhe_operadora(cnpj):
+    found = find_operadora(cnpj)
     if not found:
         return jsonify({"error": "Operadora não encontrada"}), 404
 
@@ -165,12 +190,16 @@ def detalhe_operadora(registro_ans):
     return jsonify(rr)
 
 
-@app.get("/api/operadoras/<registro_ans>/despesas")
-def despesas_operadora(registro_ans):
-    desp = load_despesas()
-    reg = only_digits(registro_ans)
+@app.get("/api/operadoras/<cnpj>/despesas")
+def despesas_operadora(cnpj):
+    found = find_operadora(cnpj)
+    if not found:
+        return jsonify({"error": "Operadora não encontrada"}), 404
 
-    hist = [r for r in desp["rows"] if r.get("_registro_norm") == reg]
+    registro = only_digits(found.get("REGISTRO_OPERADORA", ""))
+    desp = load_despesas()
+
+    hist = [r for r in desp["rows"] if r.get("_registro_norm") == registro]
     hist.sort(key=lambda r: (r.get("_ano_num", 0), r.get("_tri_num", 0)))
 
     data = []
@@ -182,16 +211,22 @@ def despesas_operadora(registro_ans):
         rr.pop("_tri_num", None)
         data.append(rr)
 
-    return jsonify({"registro_ans": reg, "data": data})
+    return jsonify({"cnpj": only_digits(found.get("CNPJ", "")), "registro_ans": registro, "data": data})
 
 
 @app.get("/api/estatisticas")
 def estatisticas():
+    op = load_operadoras()
     desp = load_despesas()
     rows = desp["rows"]
 
     if not rows:
-        return jsonify({"total_despesas": 0.0, "media_despesas": 0.0, "top_5_operadoras": []})
+        return jsonify({
+            "total_despesas": 0.0,
+            "media_despesas": 0.0,
+            "top_5_operadoras": [],
+            "despesas_por_uf": []
+        })
 
     total = sum(r.get("_valor_num", 0.0) for r in rows)
     media = total / len(rows)
@@ -206,7 +241,21 @@ def estatisticas():
     top5 = sorted(agg.items(), key=lambda x: x[1], reverse=True)[:5]
     top5_list = [{"nome": k, "total": v} for k, v in top5]
 
-    return jsonify({"total_despesas": total, "media_despesas": media, "top_5_operadoras": top5_list})
+    uf_totais = defaultdict(float)
+    for r in rows:
+        registro = r.get("_registro_norm", "")
+        op_row = op["by_registro"].get(registro)
+        uf = (op_row.get("UF") if op_row else None) or "SEM_UF"
+        uf_totais[uf] += r.get("_valor_num", 0.0)
+
+    despesas_por_uf = [{"uf": uf, "total": val} for uf, val in sorted(uf_totais.items(), key=lambda x: x[1], reverse=True)]
+
+    return jsonify({
+        "total_despesas": total,
+        "media_despesas": media,
+        "top_5_operadoras": top5_list,
+        "despesas_por_uf": despesas_por_uf
+    })
 
 
 if __name__ == "__main__":

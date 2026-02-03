@@ -20,10 +20,10 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 - Consolidação dos dados dos 3 trimestres em um único arquivo CSV.
 - Normalização das colunas para o formato:
   - CNPJ
-  - Razao Social
+  - Razão Social
   - Trimestre
   - Ano
-  - Valor Despesas
+  - Valor das Despesas
 - Geração do arquivo consolidado.csv.
 - Compactação do resultado final em consolidado_despesas.zip.
 
@@ -53,7 +53,7 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 ### 3.2 - Queries DDL para estruturar tabelas [FEITO]
 - Criação das tabelas "operadoras", "despesas_consolidadas" e "despesas_agregadas".
 
-- Trade-off técnico: Decidi seguir com tableas separadas para facilitar a análise dos dados.
+- Trade-off técnico: Decidi seguir com tabelas separadas para facilitar a análise dos dados.
 - Trade-off técnico: Utilizei o "Numeric" para não ter problemas com pontos flutuantes.
 - Trade-off técnico: Utilizei o "Smallint" por já possui os dados separados.
 
@@ -61,7 +61,7 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
 - Criação das tabelas em formato de texto para acelerar a importação.
 - Importação utilizando copy e \copy.
 - Tratativas realizadas:
-  - Os valores NULL foram ignorados e em alguns casos substituídas por texto padrão.
+  - Os valores NULL foram ignorados e, em alguns casos substituídas por texto padrão.
   - Remoção da string, passando de 1T para somente 1.
   - Armazenando ano e trimestre em colunas diferentes.
 
@@ -75,7 +75,30 @@ Nesta etapa, o arquivo é considerado válido caso contenha ao menos uma ocorrê
   - Query 3: Quais operadoras tiveram despesas acima da média
     - Trade-off técnico: Foi realizado diversas divisões ao longo do ano/trimestre, para possibilitar os calculos corretos e facilitar alterações caso o filtro seja alterado.
 
----
+### 4 - API + Interface Web [FEITO]
+  - Tela inicial exibindo os dados com "Registro ANS", "Razão Social", "UF", "Modalidade" e um botão para exibir mais informações. É possível fazer a busca para localizar diretamente uma operadora. Mais abaixo um gráfico mostrando todas as despesas por UF
+
+  - Trades-off técnicos:
+    - 4.2.1: Por não estar esperando um grande volume de dados, optei por seguir com Flask por ser mais leve e não existir muitas rotas. Essa simplicidade ajuda no desenvolvimento/entendimento do código.
+
+    - 4.2.2: Como realizei essa etapa direto com os CSVs, segui pelo estilo Offset-based, arquivos não possuem muitas alterações o que fica mais rápido de implementar e  utilziar no frontend.
+
+    - 4.2.3: Os dados são carregados uma primeira vez na memória e atualizados a cada chamada, garantindo desempenho e não causando conflito nos dados.
+
+    - 4.2.4: Para melhorar o visual do site e evitar requisições extras, optei por retornar todas as informações (Dados + metadados).
+
+    - 4.3.1: A busca é feito pelo servidor através das queries, para evitar grande volume de dados de uma vez no site e garantir seu desempenho.
+
+    - 4.3.2: Para não tornar algo robusto, segui com estado local com refs e composables do Vue 3. Se tornando algo simples sem muitas configurações.
+
+    - 4.3.3: Para não tornar algo poluído visualmente, garantir performance e uma boa experiência para o usuário, optei por dividir em páginas e mostrar 10 registros por vez.
+
+    - 4.3.4: Tratando os erros.
+      - Erros de rede/API: Exibição de mensagem simples de erro sem interromper a navegação.
+      - Estados de loading: Mensagem simples "Carregando...", sem trazer informações técnicas para quem estiver usando.
+      - Dados vazios: Para operadoras com dados insuficientes/vazios, aparece a mensagem "Sem despesas encontradas".
+
+    ---
 
 ## Tratamento de inconsistências e falhas
 Durante o processo, as seguintes inconsistências foram identificadas, registradas em um arquivo separado e tratadas:
@@ -92,10 +115,13 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
   - O arquivo é ignorado.
   - A ocorrência é registrada como inconsistência.
 
-- CNPJ inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
+- CNPJs inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
 
-- RegistroANS duplicados serão mantidos apenas os primeiros para não causar conflito nas informações.
-- RegistroANS inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
+- Registros ANS duplicados serão mantidos apenas os primeiros para não causar conflito nas informações.
+
+- Registros ANS inválidos ainda são mantidos em um outro arquivo para evitar perda de dados que possam ser importantes em algum momento.
+
+- Na interface web, algumas operadoras possuem dados incompletos, e para esses cenários optei por deixar uma mensagem informando a falta de dados, para garantir o fluxo de uso do usuário.
     
 ---
 
@@ -108,15 +134,41 @@ Durante o processo, as seguintes inconsistências foram identificadas, registrad
 
 ---
 
-## Execução do processo
+## Execução do projeto
 
-- Os comandos devem ser executados na pasta raiz do projeto, segue a ordem:
-  - py -m ans_dados.cli
-  - py -m ans_dados.enriquece_dados
-  - py -m ans_dados.valida_dados
-  - py -m ans_dados.agrega_dados
+- Etapa 1 e 2
+  - Os comandos devem ser executados na pasta raiz do projeto, segue a ordem:
+    - py -m ans_dados.cli
+    - py -m ans_dados.enriquece_dados
+    - py -m ans_dados.valida_dados
+    - py -m ans_dados.agrega_dados
+
+- Etapa 3
+  - docker compose up --build
+  - Executar os scripts SQL:
+    - 01_ddl.sql
+    - 02_ddl.sql
+    - 03_queries.sql
+
+- Etapa 4
+  - Backend (porta 5000)
+    - docker compose up --build
+
+  - frontend (porta 5173)
+    - npm install
+    - npm run dev
 
 --- 
+
+## Exemplo de requisições e respostas esperadas
+
+- Os exemplos de requisições e respostas esperadas foram documentados no Postman utilizando a funcionalidade **Examples**.
+
+Cada endpoint possui exemplos para:
+- Cenários de sucesso (HTTP 200)
+- Cenários de erro quando aplicável (HTTP 404)
+
+---
 
 ## Estrutura do projeto
 ```
@@ -157,10 +209,14 @@ interface_web/ Etapa 4
 │   │   ├── services/
 │   │   │   └── api.js
 │   │   ├── views/
-│   │   │   └── HomeView.js
+│   │   │   ├── HomeView.vue
+│   │   │   └── OperadoraView.vue
 │   │   ├── App.vue
 │   │   └── main.js
 │   └── .gitignore
 └── docker-compose.yml
+
+postman/ Documentação
+└── ANS_Operadora_API.postman_collection.json
 
 ```
